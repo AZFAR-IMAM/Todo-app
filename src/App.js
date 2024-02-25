@@ -3,6 +3,7 @@ import "./App.css";
 import { AiFillDelete } from "react-icons/ai";
 import { MdEditNote } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa";
+import { FcTodoList } from "react-icons/fc";
 
 function App() {
   const [item, setItem] = useState("");
@@ -24,6 +25,7 @@ function App() {
       setTodo(updatedTodo);
       setItem("");
       setEditId(0);
+      return;
     }
     e.preventDefault();
     if (item !== "") {
@@ -40,7 +42,12 @@ function App() {
   return (
     <div className="app">
       <div className="container">
-        <h2>Todo List App</h2>
+        <h2 className="title">
+          <span>
+            <FcTodoList />
+          </span>
+          Todo List App
+        </h2>
         <form className="todoForm" onSubmit={handelSubmit}>
           <input
             type="text"
@@ -48,7 +55,16 @@ function App() {
             value={item}
             onChange={(e) => setItem(e.target.value)}
           />
-          <button>{editId ? "edit" : <FaArrowRight />}</button>
+          <button className="primaryBtn">
+            {editId ? (
+              "edit"
+            ) : (
+              <>
+                Add
+                <FaArrowRight />
+              </>
+            )}
+          </button>
         </form>
         <ul className="allTodos">
           {todo.map((itemList) => {
@@ -57,12 +73,27 @@ function App() {
                 <span className="todoText" key={itemList.id}>
                   {itemList.item}
                 </span>
-                <button onClick={() => handelEdit(itemList.id)}>
-                  <MdEditNote />
-                </button>
-                <button onClick={() => handelDel(itemList.id)}>
-                  <AiFillDelete />
-                </button>
+                <div className="wrapperBtn">
+                  <div className="hv-edit">
+                    <span className="hv">Edit</span>
+
+                    <button
+                      className="icon-edit"
+                      onClick={() => handelEdit(itemList.id)}
+                    >
+                      <MdEditNote />
+                    </button>
+                  </div>
+                  <div className="hv-edit">
+                    <span className="hv">Delete</span>
+                    <button
+                      onClick={() => handelDel(itemList.id)}
+                      className="icon"
+                    >
+                      <AiFillDelete />
+                    </button>
+                  </div>
+                </div>
               </li>
             );
           })}
