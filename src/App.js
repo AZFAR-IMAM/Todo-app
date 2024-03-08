@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import { AiFillDelete } from "react-icons/ai";
 import { MdEditNote } from "react-icons/md";
@@ -8,26 +8,31 @@ import { FcTodoList } from "react-icons/fc";
 function App() {
   const [item, setItem] = useState("");
   const [todo, setTodo] = useState([]);
-  const [editId, setEditId] = useState(0);
+  const [editId, setEditId] = useState(0); // We will be needing this editId in two placeses 1) Button 2) Edit
+  const Iref = useRef();
   const handelEdit = (id) => {
-    const editTodo = todo.find((x) => x.id === id);
-    setItem(editTodo.item);
+    Iref.current.focus();
+    const editTodo = todo.find((x) => x.id === id); // editTodo is a Id
+    setItem(editTodo.item); // so for that we need to write editTodo.item
     setEditId(id);
+    console.log("inside handeledit", editId);
   };
+
   const handelSubmit = (e) => {
+    e.preventDefault();
     if (editId) {
-      const editTodo = todo.find((x) => x.id === editId.id);
+      console.log(editId);
+
+      // const editTodo = todo.find((x) => x.id === editId);
       const updatedTodo = todo.map((t) =>
-        t.id === editTodo
-          ? (t = { id: t.id, todo })
-          : { id: t.id, item: t.item }
+        t.id === editId ? (t = { id: t.id, item }) : { id: t.id, item: t.item }
       );
-      setTodo(updatedTodo);
+      setTodo([...updatedTodo]);
       setItem("");
       setEditId(0);
       return;
     }
-    e.preventDefault();
+
     if (item !== "") {
       setTodo([{ id: `${item}-${Date.now()}`, item }, ...todo]);
       setItem("");
@@ -35,10 +40,9 @@ function App() {
   };
   const handelDel = (id) => {
     const delTodos = todo.filter((ele) => ele.id !== id);
-    setTodo([...delTodos]);
+    setTodo(delTodos);
   };
 
-  console.log("here", editId);
   return (
     <div className="app">
       <div className="container">
@@ -53,6 +57,7 @@ function App() {
             type="text"
             placeholder="      Enter List item"
             value={item}
+            ref={Iref}
             onChange={(e) => setItem(e.target.value)}
           />
           <button className="primaryBtn">
@@ -69,10 +74,8 @@ function App() {
         <ul className="allTodos">
           {todo.map((itemList) => {
             return (
-              <li className="singleTodo">
-                <span className="todoText" key={itemList.id}>
-                  {itemList.item}
-                </span>
+              <li className="singleTodo" key={itemList.id}>
+                <span className="todoText">{itemList.item}</span>
                 <div className="wrapperBtn">
                   <div className="hv-edit">
                     <span className="hv">Edit</span>
